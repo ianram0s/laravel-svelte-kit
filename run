@@ -1,0 +1,48 @@
+#!/bin/bash
+
+ENV=$(grep -E '^APP_ENV=' .env | cut -d '=' -f2 | tr -d '\r')
+
+if [[ -z "$ENV" ]]; then
+    echo "APP_ENV not set in .env. Defaulting to 'dev'."
+    ENV="local"
+fi
+
+if [[ "$ENV" == "production" ]]; then
+    COMPOSE_FILE="compose.prod.yaml"
+else
+    COMPOSE_FILE="compose.dev.yaml"
+fi
+
+SERVICE="workspace"
+
+case "$1" in
+    up)
+        shift
+        docker compose -f $COMPOSE_FILE up -d "$@"
+        ;;
+    down)
+        docker compose -f $COMPOSE_FILE down
+        ;;
+    bash)
+        docker compose -f $COMPOSE_FILE exec $SERVICE bash
+        ;;
+    artisan)
+        shift
+        docker compose -f $COMPOSE_FILE exec $SERVICE php artisan "$@"
+        ;;
+    composer)
+        shift
+        docker compose -f $COMPOSE_FILE exec $SERVICE composer "$@"
+        ;;
+    php)
+        shift
+        docker compose -f $COMPOSE_FILE exec $SERVICE php "$@"
+        ;;
+    logs)
+        docker compose -f $COMPOSE_FILE logs -f ${2:-}
+        ;;
+    *)
+        echo "Usage: dev {up [--build]|down|bash|artisan|composer|php|logs [service]}"
+        exit 1
+        ;;
+esac
