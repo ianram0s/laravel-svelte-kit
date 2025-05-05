@@ -12,6 +12,7 @@ services:
       # The 'php-fpm' service mounts the same volume without ':ro' to allow write operations.
       # -----------------------------------------------------------
       - laravel-storage-production:/var/www/storage:ro
+      - vite-build:/var/www/public/build:ro
     networks:
       - laravel-production
     #ports:
@@ -35,6 +36,7 @@ services:
     restart: unless-stopped
     volumes:
       - laravel-storage-production:/var/www/storage  # Mount the storage volume
+      - vite-build:/var/www/public/build:ro
     env_file:
       - .env
     networks:
@@ -60,6 +62,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  assets:
+    build:
+      context: .
+      dockerfile: ./docker/common/assets/Dockerfile
+    volumes:
+      - vite-build:/var/www/public/build
 
 networks:
   # Attach the service to the 'laravel' network.
@@ -71,3 +79,4 @@ networks:
 
 volumes:
   laravel-storage-production:
+  vite-build:

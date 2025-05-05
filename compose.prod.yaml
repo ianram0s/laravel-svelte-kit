@@ -91,6 +91,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  assets:
+    build:
+      context: .
+      dockerfile: ./docker/common/assets/Dockerfile
+    volumes:
+      - vite-build:/var/www/public/build
 
 networks:
   # Attach the service to the 'laravel' network.
@@ -103,3 +109,4 @@ networks:
 volumes:
   postgres-data-production:
   laravel-storage-production:
+  vite-build:
