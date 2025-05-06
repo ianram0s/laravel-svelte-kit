@@ -31,28 +31,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    depends_on:
-      pgsql:
-        condition: service_healthy
-  pgsql:
-    image: postgres:17
-    restart: unless-stopped
-    user: postgres
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    environment:
-      - POSTGRES_DB=${DB_DATABASE:-app}
-      - POSTGRES_USER=${DB_USERNAME:-laravel}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-secret}
-    volumes:
-      - postgres-data-production:/var/lib/postgresql/data
-    networks:
-      - laravel-production
-    healthcheck:
-      test: [ "CMD", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   redis:
     image: redis:alpine
@@ -76,6 +54,5 @@ networks:
   laravel-production:
 
 volumes:
-  postgres-data-production:
   laravel-storage-production:
   vite-build:

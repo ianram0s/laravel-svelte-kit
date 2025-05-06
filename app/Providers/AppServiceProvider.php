@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // This makes sure Cloudfare tunelling works!
         if (app()->environment('production')) {
             URL::forceScheme('https');
         }
